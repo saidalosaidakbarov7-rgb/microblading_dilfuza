@@ -17,14 +17,22 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+   origin(origin, callback) {
+  if (!origin) {
+    return callback(null, true);
+  }
 
-      console.log("CORS blocked:", origin);
-      return callback(new Error(`CORS: ruxsat etilmagan manzil: ${origin}`));
-    },
+  const isAllowed =
+    allowedOrigins.includes(origin) ||
+    /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+  if (isAllowed) {
+    return callback(null, true);
+  }
+
+  console.log("CORS blocked:", origin);
+  return callback(new Error(`CORS: ruxsat etilmagan manzil: ${origin}`));
+},
   })
 );
 
